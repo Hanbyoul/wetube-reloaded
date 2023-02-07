@@ -1,10 +1,14 @@
 import express from "express";
-import { see, edit, upload, deleteVideo } from "../controllers/videoController";
+import {
+  watch,
+  getEdit,
+  getUpload,
+  postEdit,
+  postUpload,
+} from "../controllers/videoController";
 const videosRouter = express.Router();
 
-videosRouter.get("/:id(\\d+)", see); //정규식 d:숫자만 , "+" : 게속해서
-videosRouter.get("/:id(\\d+)/edit", edit);
-videosRouter.get("/:id(\\d+)/delete", deleteVideo);
-videosRouter.get("/upload", upload);
-
+videosRouter.get("/:id(\\d+)", watch);
+videosRouter.route("/:id(\\d+)/edit").get(getEdit).post(postEdit);
+videosRouter.route("/upload").get(getUpload).post(postUpload);
 export default videosRouter;

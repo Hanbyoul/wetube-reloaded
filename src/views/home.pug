@@ -1,9 +1,14 @@
 extends base.pug
 include mixins/video
 
+block navcontent
+      nav
+         ul
+            li 
+               a(href="/videos/upload") Upload video
 block content
-    h2 Welcome here you will see the trending videos
-     each item in videoList
-        +video(item)
-     else
-        li 데이터가 없습니다.
+          h2 Welcome here you will see the trending videos
+           each item in videoList
+              +video(item)
+           else
+              li 데이터가 없습니다.
