@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const viedoSchema = new mongoose.Schema({
+const videoSchema = new mongoose.Schema({
   title: { type: String, required: true, trim: true, maxLength: 80 },
   description: { type: String, required: true, trim: true, minLength: 20 },
   createdAt: { type: Date, required: true, default: Date.now },
@@ -11,5 +11,11 @@ const viedoSchema = new mongoose.Schema({
   },
 });
 
-const Video = mongoose.model("Video", viedoSchema);
+videoSchema.static("HashTagsForm", function (hashtags) {
+  return hashtags
+    .split(",")
+    .map((word) => (word.startsWith("#") ? word : `#${word}`));
+});
+
+const Video = mongoose.model("Video", videoSchema);
 export default Video;
