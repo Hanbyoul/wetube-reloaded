@@ -59,7 +59,11 @@ export const postLogin = async (req, res) => {
       errorMessage: "존재하지 않는 Password 이거나 잘못 입력하였습니다.",
     });
   }
-  req.session.loggedIn = true; //user가 로그인시 session.loggedIn key가 생기면서, true가 된다.
+
+  //session에 data 넣기
+  req.session.loggedIn = true;
+  //user가 로그인시 session.loggedIn key가 생기면서, true가 된다.
+  //session 안에 있기때문에 userController 어디서든 다 사용이 가능하다.
   req.session.user = user; // user가 로그인시 session.user key가 생기면서 , 유저 정보가 들어간다
   return res.redirect("/");
 };

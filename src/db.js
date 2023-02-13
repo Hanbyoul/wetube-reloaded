@@ -1,8 +1,10 @@
 import mongoose from "mongoose";
 
+console.log(process.env.COOKIE_SECRET, process.env.DB_URL);
+
 mongoose.set("strictQuery", true);
 
-mongoose.connect("mongodb://127.0.0.1:27017/wetube");
+mongoose.connect(process.env.DB_URL);
 
 const db = mongoose.connection;
 
