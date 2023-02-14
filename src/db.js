@@ -1,7 +1,5 @@
 import mongoose from "mongoose";
 
-console.log(process.env.COOKIE_SECRET, process.env.DB_URL);
-
 mongoose.set("strictQuery", true);
 
 mongoose.connect(process.env.DB_URL);
