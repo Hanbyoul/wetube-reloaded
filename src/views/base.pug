@@ -11,18 +11,18 @@ html(lang="ko")
                         a(href="/") Home 
                     if loggedIn
                         li
-                            a(href="/users/logout") Logout
+                            a(href="/users/edit") Edit Profile
                         li
-                            a(href="/my-profile") #{loggedInUser.name}의 프로필
+                            a(href="/users/logout") Logout
+                        li 
+                            a(href="/videos/upload") Upload video
                     else
                         li
                             a(href="/join") Join
                         li 
                             a(href="/login") Login
-                    li 
-                        a(href="/search") Search video
-                    li 
-                        a(href="/videos/upload") Upload video
+                        li 
+                            a(href="/search") Search video
             h1=pageTitle
         main
             block content

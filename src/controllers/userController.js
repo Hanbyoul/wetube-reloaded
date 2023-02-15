@@ -158,9 +158,137 @@ export const finishGithubLogin = async (req, res) => {
   }
 };
 
-export const edit = (req, res) => res.send("Edit My Profile");
+// KAKAOLOGIN
+
+export const startKakaoLogin = (req, res) => {
+  const baseUrl = "https://kauth.kakao.com/oauth/authorize";
+  const config = {
+    client_id: process.env.KAKAO_CLIENT,
+    redirect_uri: process.env.KAKAO_FINISH_URI,
+    response_type: "code",
+  };
+  const params = new URLSearchParams(config).toString();
+  const finalUrl = `${baseUrl}?${params}`;
+
+  return res.redirect(finalUrl);
+};
+export const finishKakaoLogin = async (req, res) => {
+  const baseUrl = "https://kauth.kakao.com/oauth/token";
+  const config = {
+    client_id: process.env.KAKAO_CLIENT,
+    grant_type: "authorization_code",
+    redirect_uri: process.env.KAKAO_FINISH_URI,
+    code: req.query.code,
+  };
+  const params = new URLSearchParams(config).toString();
+  const finalUrl = `${baseUrl}?${params}`;
+  const kakaoToken = await (
+    await fetch(finalUrl, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+      },
+    })
+  ).json();
+
+  if ("access_token" in kakaoToken) {
+    const { access_token } = kakaoToken;
+    const apiUrl = "https://kapi.kakao.com";
+    const userData = await (
+      await fetch(`${apiUrl}/v2/user/me`, {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+        },
+      })
+    ).json();
+    const emailData = userData.kakao_account;
+    if (
+      emailData.is_email_valid === false ||
+      emailData.is_email_verified === false
+    ) {
+      return redirect("/login");
+    }
+
+    let user = await User.findOne({ email: emailData.email });
+
+    if (!user) {
+      user = await User.create({
+        email: userData.kakao_account.email,
+        avatarUrl: userData.properties.thumbnail_image_url,
+        socialOnly: true,
+        username: "scope schema 재설정",
+        password: "",
+      });
+    }
+    req.session.loggedIn = true;
+    req.session.user = user;
+    return res.redirect("/");
+  } else {
+    return res.redirect("/login");
+  }
+};
+
+// KAKAOLOGIN
+
+export const getEdit = (req, res) => {
+  const pageTitle = "Edit Profile";
+  return res.render("edit-profile", { pageTitle });
+};
+export const postEdit = async (req, res) => {
+  const pageTitle = "Edit Profile";
+
+  //ES6 문법으로 req  하나로 정보들을 축약해서 다 뺄 수 있다.
+  const {
+    session: {
+      user: { _id }, // 현재 로그인된 user id 추출
+    },
+    body: { name, email, username, location }, //edit에서 추출한 속성값
+  } = req;
+
+  const sessionUser = req.session.user;
+  console.log("입력값", email);
+  console.log("세션값", sessionUser.email);
+  if (username !== sessionUser.username) {
+    console.log("유저가 username 업데이트를 한다");
+    const exists = await User.exists({ username });
+    if (exists) {
+      return res.status(400).render("edit-profile", {
+        pageTitle,
+        errorMessage: "이미 사용중인 username 입니다.",
+      });
+    }
+  } else if (email !== sessionUser.email) {
+    console.log("유저가 email 업데이트를 한다");
+    const exists = await User.exists({ email });
+    if (exists) {
+      return res.status(400).render("edit-profile", {
+        pageTitle,
+        errorMessage: "이미 사용중인 email 입니다.",
+      });
+    }
+  }
+
+  //findByIdAndUpdate
+  //1번째 인자 - 업데이트 하고자 하는 객체
+  //2번째 인자 - 업데이트 할 내용
+  //3번째 인자 - 업데이트된 내용을 바로 적용 할것인가
+
+  const updateUser = await User.findByIdAndUpdate(
+    _id,
+    {
+      // 로그인된 user의 name,email,username,location 을 edit에서 추출한 속성값으로 변경(업데이트)
+      name,
+      email,
+      username,
+      location,
+    },
+    { new: true } // new:true  - 업데이트된 data를 쓰겟다. 기본값은 false 이다.
+  );
+  req.session.user = updateUser; //session의 user 정보도 update
+  return res.redirect("/users/edit");
+};
 export const logout = (req, res) => {
-  req.session.destroy(); // DB의 세션을 제거한다
+  req.session.destroy();
   return res.redirect("/");
 };
 export const see = (req, res) => res.send("See User");
