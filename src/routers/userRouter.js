@@ -8,8 +8,14 @@ import {
   finishGithubLogin,
   startKakaoLogin,
   finishKakaoLogin,
+  getChangePassword,
+  postChangePassword,
 } from "../controllers/userController";
-import { protectorMiddleware, publicOnlyMiddleware } from "../middlewares";
+import {
+  protectorMiddleware,
+  publicOnlyMiddleware,
+  uploadFiles,
+} from "../middlewares";
 
 const userRouter = express.Router();
 
@@ -20,11 +26,24 @@ userRouter.get("/logout", protectorMiddleware, logout);
 //protectorMiddleware - 로그인 된 유저만 이용할 수 있게
 //publicOnlyMiddleware - 로그인 되지않은 유저만 이용할 수 있게
 
-userRouter.route("/edit").all(protectorMiddleware).get(getEdit).post(postEdit);
+userRouter
+  .route("/edit")
+  .all(protectorMiddleware)
+  .get(getEdit)
+  .post(uploadFiles.single("avatar"), postEdit);
+//multer가 input의 "name"으로 설정한 "avatar"의 파일을 받아서
+//그파일을 uploads 폴더에 저장한 다음
+//그파일 정보를 postEdit에 전달해준다.
+//이후 req.file 이 사용가능하다.
+userRouter
+  .route("/change-password")
+  .all(protectorMiddleware)
+  .get(getChangePassword)
+  .post(postChangePassword);
+userRouter.get("/:id", see);
 userRouter.get("/github/start", publicOnlyMiddleware, startGithubLogin);
 userRouter.get("/github/finish", publicOnlyMiddleware, finishGithubLogin);
 userRouter.get("/kakao/start", publicOnlyMiddleware, startKakaoLogin);
 userRouter.get("/kakao/finish", publicOnlyMiddleware, finishKakaoLogin);
-userRouter.get("/:id", see);
 
 export default userRouter;
