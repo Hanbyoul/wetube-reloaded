@@ -46,11 +46,13 @@ export const getUpload = (req, res) => {
 };
 
 export const postUpload = async (req, res) => {
+  const file = req.file;
   const { title, description, hashtags } = req.body;
   try {
     await Video.create({
       title,
       description,
+      fileUrl: file.path,
       hashtags: Video.HashTagsForm(hashtags), // schema에서 만든 static(정적)함수를 불러와서 사용
     });
   } catch (error) {

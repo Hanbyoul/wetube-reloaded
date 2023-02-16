@@ -12,9 +12,9 @@ import {
   postChangePassword,
 } from "../controllers/userController";
 import {
+  avatarUpload,
   protectorMiddleware,
   publicOnlyMiddleware,
-  uploadFiles,
 } from "../middlewares";
 
 const userRouter = express.Router();
@@ -30,7 +30,7 @@ userRouter
   .route("/edit")
   .all(protectorMiddleware)
   .get(getEdit)
-  .post(uploadFiles.single("avatar"), postEdit);
+  .post(avatarUpload.single("avatar"), postEdit);
 //multer가 input의 "name"으로 설정한 "avatar"의 파일을 받아서
 //그파일을 uploads 폴더에 저장한 다음
 //그파일 정보를 postEdit에 전달해준다.

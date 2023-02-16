@@ -189,9 +189,9 @@ export const finishKakaoLogin = async (req, res) => {
     if (!user) {
       user = await User.create({
         email: userData.kakao_account.email,
-        avatarUrl: userData.properties.thumbnail_image_url,
+        avatarUrl: userData.kakao_account.profile.thumbnail_image_url,
         socialOnly: true,
-        username: "scope schema 재설정",
+        username: "scope schema 재설정해야됨",
         password: "",
       });
     }
@@ -254,6 +254,7 @@ export const postEdit = async (req, res) => {
     },
     { new: true }
   );
+  console.log("avata", avatarUrl);
   req.session.user = updateUser;
   return res.redirect("/users/edit");
 };

@@ -28,6 +28,17 @@ export const publicOnlyMiddleware = (req, res, next) => {
   }
 };
 
-export const uploadFiles = multer({ dest: "upload/" });
-// 모든 사용자가 업로드하는 파일을 upload 폴더에 저장 시킨다 (db에 저장)
-// route에서 사용
+export const avatarUpload = multer({
+  dest: "uploads/avatars/",
+  limits: {
+    fileSize: 3000000,
+    //upload 할때 파일의 용량을 제한한다.
+    //bytes 단위이다.
+  },
+});
+export const videoUpload = multer({
+  dest: "uploads/videos/",
+  limits: {
+    fileSize: 10000000, //10Mb
+  },
+});
