@@ -126,7 +126,7 @@ export const finishGithubLogin = async (req, res) => {
         location: userData.location,
       });
     }
-    console.log("🎁", userData);
+
     req.session.loggedIn = true;
     req.session.user = user;
     return res.redirect("/");
@@ -195,7 +195,7 @@ export const finishKakaoLogin = async (req, res) => {
         password: "",
       });
     }
-    console.log("🧲", userData);
+
     req.session.loggedIn = true;
     req.session.user = user;
     return res.redirect("/");
@@ -238,14 +238,10 @@ export const postEdit = async (req, res) => {
       });
     }
   }
-  console.log(file);
+
   const updateUser = await User.findByIdAndUpdate(
     _id,
     {
-      //user가 파일을 업로드하면 , file은 path를 얻게되고
-      // 그 path값을 사용한다.
-      //user가 파일을 업로드하지 않고 프로필을 수정하면
-      //파일의 상태는 undefined이고 , 기존에있던 아바타path를 다시 사용한다.
       avatarUrl: file ? file.path : avatarUrl,
       name,
       email,
@@ -254,7 +250,7 @@ export const postEdit = async (req, res) => {
     },
     { new: true }
   );
-  console.log("avata", avatarUrl);
+
   req.session.user = updateUser;
   return res.redirect("/users/edit");
 };
@@ -302,4 +298,14 @@ export const postChangePassword = async (req, res) => {
   return res.redirect("/login");
 };
 
-export const see = (req, res) => res.send("See User");
+export const see = async (req, res) => {
+  const { id } = req.params;
+  const user = await User.findById(id);
+  if (!user) {
+    return res.status(404).render("404", { pageTitle: "User Not found" });
+  }
+  return res.render("users/profile", {
+    pageTitle: user.name,
+    user,
+  });
+};

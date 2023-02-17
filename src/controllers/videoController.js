@@ -1,4 +1,5 @@
 import Video from "../models/Video";
+import User from "../models/User";
 
 export const home = async (req, res) => {
   const videos = await Video.find({}).sort({ createdAt: "desc" });
@@ -8,10 +9,12 @@ export const home = async (req, res) => {
 export const watch = async (req, res) => {
   const { id } = req.params;
   const video = await Video.findById(id); // id를 가지고 id대상을 찾는다 //
+  const owner = await User.findById(video.owner.toString());
+  console.log(owner);
   if (!video) {
     return res.render("404", { pageTitle: "Video not found." });
   }
-  return res.render("videos/watch", { pageTitle: video.title, video });
+  return res.render("videos/watch", { pageTitle: video.title, video, owner });
 };
 
 export const getEdit = async (req, res) => {
@@ -46,14 +49,18 @@ export const getUpload = (req, res) => {
 };
 
 export const postUpload = async (req, res) => {
+  const {
+    user: { _id },
+  } = req.session;
   const file = req.file;
   const { title, description, hashtags } = req.body;
   try {
     await Video.create({
       title,
       description,
+      owner: _id,
       fileUrl: file.path,
-      hashtags: Video.HashTagsForm(hashtags), // schema에서 만든 static(정적)함수를 불러와서 사용
+      hashtags: Video.HashTagsForm(hashtags),
     });
   } catch (error) {
     return res.status(400).render("videos/upload", {
