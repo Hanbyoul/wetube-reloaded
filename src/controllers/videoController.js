@@ -8,13 +8,12 @@ export const home = async (req, res) => {
 
 export const watch = async (req, res) => {
   const { id } = req.params;
-  const video = await Video.findById(id); // id를 가지고 id대상을 찾는다 //
-  const owner = await User.findById(video.owner.toString());
-  console.log(owner);
+  const video = await Video.findById(id).populate("owner");
+  console.log(video);
   if (!video) {
     return res.render("404", { pageTitle: "Video not found." });
   }
-  return res.render("videos/watch", { pageTitle: video.title, video, owner });
+  return res.render("videos/watch", { pageTitle: video.title, video });
 };
 
 export const getEdit = async (req, res) => {

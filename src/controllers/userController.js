@@ -1,4 +1,5 @@
 import User from "../models/User";
+import Video from "../models/Video";
 import bcrypt from "bcrypt";
 import fetch from "node-fetch";
 
@@ -304,8 +305,11 @@ export const see = async (req, res) => {
   if (!user) {
     return res.status(404).render("404", { pageTitle: "User Not found" });
   }
+  const videos = await Video.find({ owner: user._id }); // URL의 id 와 video-owner id가 일치한 경우
+  console.log(videos);
   return res.render("users/profile", {
     pageTitle: user.name,
     user,
+    videos,
   });
 };
