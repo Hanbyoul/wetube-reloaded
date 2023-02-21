@@ -1,15 +1,15 @@
 extends ../base
 
 block content 
-    if loggedInUser.avatarUrl
-        if (loggedInUser.avatarUrl.startsWith("uploads"))
-            img(src="/"+loggedInUser.avatarUrl,height="100",width="100")
-        if (loggedInUser.avatarUrl.startsWith("http"))
-            img(src=loggedInUser.avatarUrl,height="100",width="100")
     if errorMessage
         span=errorMessage
-    form(method="POST", enctype="multipart/form-data")
-        label(for="avatar") Avatar
+    form(method="POST", enctype="multipart/form-data").edit-profile__form
+        label(for="avatar")
+            if loggedInUser.avatarUrl
+                if (loggedInUser.avatarUrl.startsWith("uploads"))
+                    img(src="/"+loggedInUser.avatarUrl,height="100",width="100")
+                if (loggedInUser.avatarUrl.startsWith("http"))
+                    img(src=loggedInUser.avatarUrl,height="100",width="100")
         input(type="file",id="avatar" , name="avatar" , accept="image/*")
         input(placeholder="Name" name="name" , type="text" , required ,value=loggedInUser.name)
         input(placeholder="E-mail" name="email" , type="text" , required ,value=loggedInUser.email)
@@ -17,5 +17,5 @@ block content
         input(placeholder="Location" name="location" , type="text" , required ,value=loggedInUser.location)
         input(type="submit",value="Update Profile")
         if !loggedInUser.socialOnly
-            hr
-            a(href="change-password") Change Password &rarr;
+            div.edit-profile__password
+                a(href="change-password") Change Password &rarr;

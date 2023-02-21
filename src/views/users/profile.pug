@@ -2,7 +2,15 @@ extends ../base
 include ../mixins/video
 
 block content
-    each item in user.videos
-       +video(item)
-    else
-        li 데이터가 없습니다.
+    div.profile__data
+        if loggedInUser.avatarUrl
+            if (loggedInUser.avatarUrl.startsWith("uploads"))
+                img(src="/"+loggedInUser.avatarUrl).avatar
+            if (loggedInUser.avatarUrl.startsWith("http"))
+                img(src=loggedInUser.avatarUrl).avatar
+        h3=user.name
+    div.video-grid
+        each item in user.videos
+            +video(item)
+        else
+            span.empty__message No videos found

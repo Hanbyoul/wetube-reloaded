@@ -1,20 +1,26 @@
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const path = require("path");
 
 module.exports = {
-  // 모든 내용들이 module.exports 안에 다 들어가 있어야한다!!!!
   entry: "./src/client/js/main.js",
+  plugins: [
+    new MiniCssExtractPlugin({
+      filename: "css/styles.css",
+    }),
+  ],
   mode: "development",
+  watch: true, //webpack이 assets를 주시하여 변경점을 감지되면 리프레시 한다
   output: {
-    filename: "main.js",
-    path: path.resolve(__dirname, "assets", "js"),
+    filename: "js/main.js",
+    path: path.resolve(__dirname, "assets"),
+    clean: true, //output이 실행되기전(build) 클린해준다
   },
   module: {
     rules: [
       {
-        test: /\.js$/, //변환시킬 파일의 형식
+        test: /\.js$/,
         use: {
-          // 어떤loader로 변환 시킬 것인지
-          loader: "babel-loader", //'babel-loader' 로 변환 시켜준다.
+          loader: "babel-loader",
           options: {
             presets: [["@babel/preset-env", { targets: "defaults" }]],
           },
@@ -22,9 +28,8 @@ module.exports = {
       },
       {
         test: /\.scss$/,
-        use: ["style-loader", "css-loader", "sass-loader"],
-        //webpack은 뒤에서 부터 읽기 때문에 , 사용할 순서를 정할때 역순으로 입력 해야한다.
-        //sass-loader ⏩ css-loader ⏩ styels-loader 으로 실행된다.
+        //style-loader 대신 MiniCssExtractPlugin를 사용한다.
+        use: [MiniCssExtractPlugin.loader, "css-loader", "sass-loader"],
       },
     ],
   },

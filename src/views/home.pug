@@ -2,7 +2,8 @@ extends base
 include mixins/video
 
 block content
-           each item in videos
-              +video(item)
-           else
-              li 데이터가 없습니다.
+   div.video-grid
+       each item in videos
+          +video(item)
+       else
+            span.empty__message No videos found
