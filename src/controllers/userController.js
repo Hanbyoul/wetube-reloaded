@@ -178,6 +178,8 @@ export const finishKakaoLogin = async (req, res) => {
       })
     ).json();
 
+    console.log(userData);
+
     const emailData = userData.kakao_account;
     if (
       emailData.is_email_valid === false ||
@@ -192,7 +194,7 @@ export const finishKakaoLogin = async (req, res) => {
         email: userData.kakao_account.email,
         avatarUrl: userData.kakao_account.profile.thumbnail_image_url,
         socialOnly: true,
-        username: "scope schema 재설정해야됨",
+        username: userData.kakao_account.profile.nickname,
         password: "",
       });
     }
