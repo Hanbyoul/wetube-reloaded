@@ -12,6 +12,8 @@ const fullScreenIcon = fullScreen.querySelector("i"); //fullScreenBtn 안에 있
 const videoContainer = document.getElementById("videoContainer");
 const videoControls = document.getElementById("videoControls");
 
+console.log(videoContainer.dataset);
+
 let controlsTimeout = null;
 let controlsMovementTimeout = null;
 let volumeValue = 0.5; //미디어의 초기값 , 이후 비디오의 볼륨값을 저장
@@ -51,8 +53,6 @@ const handleMute = (e) => {
   }
 
   volumeRange.value = video.muted ? 0 : volumeValue; // 음소거를 취소하면 가장최근의 볼륨값으로 바뀐다
-  console.log("뮤트 온오프 비디오", video.volume);
-  console.log("뮤트 온오프 전역 ", volumeValue);
 };
 
 //미디어 볼륨 설정
@@ -164,6 +164,17 @@ const handleMouseLeave = () => {
   controlsTimeout = setTimeout(hideControls, 3000);
 };
 
+//video가 끝났을때 백엔드에 요청한다.
+const handleEnded = () => {
+  const { id } = videoContainer.dataset;
+  fetch(`/api/videos/${id}/view`, {
+    method: "POST",
+  });
+
+  // video의 view를 업데이트 하는 POST 작업중이기 때문에
+  // fetch는 기본적으로 GET Method이기 때문에 ,POST옵션을 명시 해야한다
+};
+
 playBtn.addEventListener("click", handlePlayClick);
 muteBtn.addEventListener("click", handleMute);
 volumeRange.addEventListener("input", handleVolumeChange);
@@ -171,11 +182,12 @@ volumeRange.addEventListener("focusin", handleKeySetOff);
 volumeRange.addEventListener("focusout", handleKeySetOff);
 video.addEventListener("loadedmetadata", handleLoadedMetaData);
 video.addEventListener("timeupdate", handleTimeUpdate);
+video.addEventListener("click", handlePlayClick);
+video.addEventListener("ended", handleEnded);
 timeline.addEventListener("input", handleTimelineChange);
 fullScreen.addEventListener("click", handleFullScreen);
 videoContainer.addEventListener("mousemove", handleMouseMove);
 videoContainer.addEventListener("mouseleave", handleMouseLeave);
-video.addEventListener("click", handlePlayClick);
 document.addEventListener("keydown", (e) => handleKeyPlay(e));
 document.addEventListener("keydown", (e) => handleKeySetTime(e));
 document.addEventListener("keydown", (e) => handleKeyFullScreen(e));
