@@ -29,6 +29,7 @@ export const getEdit = async (req, res) => {
   }
 
   if (String(video.owner) !== String(_id)) {
+    req.flash("error", "You are not the owner of the video");
     return res.status(403).redirect("/");
   }
   return res.render("videos/edit", { pageTitle: video.title, video });
@@ -53,7 +54,7 @@ export const postEdit = async (req, res) => {
     description,
     hashtags: Video.HashTagsForm(hashtags),
   });
-
+  req.flash("success", "Changes saved");
   return res.redirect(`/videos/${id}`);
 };
 
@@ -65,14 +66,18 @@ export const postUpload = async (req, res) => {
   const {
     user: { _id },
   } = req.session;
-  const file = req.file;
+
+  // const file = req.file;  파일 업로드 옵션이 single 일떄
+  const { video, thumb } = req.files; // 파일 업로드 옵션이 files 일때
+  console.log(thumb);
   const { title, description, hashtags } = req.body;
   try {
     const newVideo = await Video.create({
       title,
       description,
       owner: _id,
-      fileUrl: file.path,
+      fileUrl: video[0].path,
+      thumbUrl: thumb[0].path,
       hashtags: Video.HashTagsForm(hashtags),
     });
 

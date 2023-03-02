@@ -13,6 +13,7 @@ export const protectorMiddleware = (req, res, next) => {
     //로그인이 된 사람만 다음 단계 진행
     return next();
   } else {
+    req.flash("error", "Not authorized"); //타입과 메세지를 넣는다.
     //로그인이 되지 않았다면 로그인페이지로 리다이렉트
     return res.redirect("/login");
   }
@@ -23,6 +24,7 @@ export const publicOnlyMiddleware = (req, res, next) => {
     //로그인 되지않은 사람만 다음 단계 진행.
     return next();
   } else {
+    req.flash("error", "Not authorized");
     //로그인이 된사람은 홈페이지로 리다이렉트
     return res.redirect("/");
   }

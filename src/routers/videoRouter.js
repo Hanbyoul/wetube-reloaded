@@ -24,5 +24,12 @@ videosRouter
   .route("/upload")
   .all(protectorMiddleware)
   .get(getUpload)
-  .post(videoUpload.single("video"), postUpload);
+  .post(
+    videoUpload.fields([
+      { name: "video", maxCount: 1 },
+      { name: "thumb", maxCount: 1 },
+    ]),
+    postUpload
+  );
+// .post(videoUpload.single("video"), postUpload); 하나의 파일만 받는 옵션
 export default videosRouter;

@@ -4,6 +4,7 @@ import rootRouter from "./routers/rootRouter";
 import userRouter from "./routers/userRouter";
 import videosRouter from "./routers/videoRouter";
 import session from "express-session";
+import flash from "express-flash";
 import MongoStore from "connect-mongo";
 import { localsMiddleware } from "./middlewares";
 import apiRouter from "./routers/apiRouter";
@@ -32,6 +33,7 @@ app.use(
   })
 );
 
+app.use(flash());
 app.use(localsMiddleware);
 app.use("/uploads", express.static("uploads"));
 app.use("/assets", express.static("assets"));
