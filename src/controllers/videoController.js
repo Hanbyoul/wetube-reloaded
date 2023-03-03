@@ -1,5 +1,7 @@
 import Video from "../models/Video";
 import User from "../models/User";
+import Comment from "../models/Comment";
+import session from "express-session";
 
 export const home = async (req, res) => {
   const videos = await Video.find({})
@@ -11,8 +13,8 @@ export const home = async (req, res) => {
 export const watch = async (req, res) => {
   const { id } = req.params;
   const video = await Video.findById(id).populate("owner");
-  console.log(video);
   if (!video) {
+    console.log(video);
     return res.render("404", { pageTitle: "Video not found." });
   }
   return res.render("videos/watch", { pageTitle: video.title, video });
@@ -137,4 +139,31 @@ export const registerView = async (req, res) => {
   video.meta.views = video.meta.views + 1;
   await video.save();
   return res.sendStatus(200); // status 코드를 보내고,연결을 끉는다
+};
+
+export const createComment = async (req, res) => {
+  // console.log(req.params);
+  // console.log(req.body.text);
+  // console.log(req.session.user);
+
+  const {
+    params: { id },
+    body: { text },
+    session: { user },
+  } = req;
+
+  console.log(user, text, id);
+
+  const video = await Video.findById(id);
+
+  if (!video) {
+    return res.sendStatus(404);
+  }
+  const comment = await Comment.create({
+    text,
+    owner: user._id,
+    video: id,
+  });
+
+  return res.sendStatus(201);
 };

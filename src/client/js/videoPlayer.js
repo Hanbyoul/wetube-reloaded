@@ -12,13 +12,11 @@ const fullScreenIcon = fullScreen.querySelector("i"); //fullScreenBtn 안에 있
 const videoContainer = document.getElementById("videoContainer");
 const videoControls = document.getElementById("videoControls");
 
-console.log(videoContainer.dataset);
-
 let controlsTimeout = null;
 let controlsMovementTimeout = null;
 let volumeValue = 0.5; //미디어의 초기값 , 이후 비디오의 볼륨값을 저장
 video.volume = volumeValue;
-let videoSetTime = false;
+
 //미디어 플레이,스톱 설정
 const handlePlayClick = (e) => {
   if (video.paused) {
@@ -29,12 +27,12 @@ const handlePlayClick = (e) => {
   playBtnIcon.classList = video.paused ? "fas fa-play" : "fas fa-pause";
 };
 
-const handleKeyPlay = (e) => {
-  if (e.code === "Space") {
-    e.preventDefault();
-    handlePlayClick();
-  }
-};
+// const handleKeyPlay = (e) => {
+//   if (e.code === "Space") {
+//     e.preventDefault();
+//     handlePlayClick();
+//   }
+// };
 
 //미디어 볼륨 음소거 설정
 const handleMute = (e) => {
@@ -64,9 +62,11 @@ const handleVolumeChange = (e) => {
   if (video.muted) {
     video.muted = false;
   } else {
-    video.muted = false;
+    video.muted = true;
   }
 
+  console.log("이벤트", e.target.value);
+  console.log(volumeRange.value);
   volumeValue = value; //볼륨을 올리거나,내릴때 항상 값이 저장된다 (최근값 저장용)
   video.volume = value; //미디어의 볼륨 조절( 사용자가 드래그한 벨류값으로)
 
@@ -103,20 +103,9 @@ const handleTimelineChange = (e) => {
   video.currentTime = value; //미디어의 실시간 조절 ( 사용자가 드래그한 벨류값으로)
 };
 
-const handleKeySetOff = () => {
-  videoSetTime = !videoSetTime;
-};
-
-const handleKeySetTime = (e) => {
-  if (!videoSetTime) {
-    if (e.key === "ArrowRight") {
-      video.currentTime += 3;
-    }
-    if (e.key === "ArrowLeft") {
-      video.currentTime -= 3;
-    }
-  }
-};
+// const handleKeySetOff = () => {
+//   videoSetTime = !videoSetTime;
+// };
 
 //미디어이
 const handleFullScreen = () => {
@@ -132,9 +121,37 @@ const handleFullScreen = () => {
   }
 };
 
-const handleKeyFullScreen = (e) => {
+const handleKeyEvent = (e) => {
   if (e.key === "Enter") {
     handleFullScreen();
+  }
+  if (e.key === "ArrowRight") {
+    video.currentTime += 3;
+  }
+  if (e.key === "ArrowLeft") {
+    video.currentTime -= 3;
+  }
+  if (e.key === " ") {
+    e.preventDefault();
+    handlePlayClick();
+  }
+  if (e.key === "ArrowUp") {
+    e.preventDefault();
+    if (video.volume < 0.9) {
+      video.volume = video.volume + 0.1;
+      volumeRange.value = video.volume;
+    }
+  }
+
+  //볼륨 아이콘 셋팅 다시 확인하기!!!
+  //비디오 key이벤트에 따른 동영상 가운데에 표시하기(유튜브처럼)
+
+  if (e.key === "ArrowDown") {
+    e.preventDefault();
+    if (video.volume > 0.1) {
+      video.volume = video.volume - 0.1;
+      volumeRange.value = video.volume;
+    }
   }
 };
 
@@ -178,8 +195,6 @@ const handleEnded = () => {
 playBtn.addEventListener("click", handlePlayClick);
 muteBtn.addEventListener("click", handleMute);
 volumeRange.addEventListener("input", handleVolumeChange);
-volumeRange.addEventListener("focusin", handleKeySetOff);
-volumeRange.addEventListener("focusout", handleKeySetOff);
 video.addEventListener("loadedmetadata", handleLoadedMetaData);
 video.addEventListener("timeupdate", handleTimeUpdate);
 video.addEventListener("click", handlePlayClick);
@@ -188,6 +203,7 @@ timeline.addEventListener("input", handleTimelineChange);
 fullScreen.addEventListener("click", handleFullScreen);
 videoContainer.addEventListener("mousemove", handleMouseMove);
 videoContainer.addEventListener("mouseleave", handleMouseLeave);
-document.addEventListener("keydown", (e) => handleKeyPlay(e));
-document.addEventListener("keydown", (e) => handleKeySetTime(e));
-document.addEventListener("keydown", (e) => handleKeyFullScreen(e));
+video.addEventListener("click", () => video.focus());
+video.addEventListener("keydown", (e) => {
+  handleKeyEvent(e);
+});
