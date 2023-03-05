@@ -44,6 +44,9 @@
       justify-content: space-around;
       align-items: center;
       cursor: pointer;
+      input {
+        outline: none;
+      }
       span {
         margin-left: 15px;
         i {

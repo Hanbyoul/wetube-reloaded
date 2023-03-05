@@ -27,13 +27,6 @@ const handlePlayClick = (e) => {
   playBtnIcon.classList = video.paused ? "fas fa-play" : "fas fa-pause";
 };
 
-// const handleKeyPlay = (e) => {
-//   if (e.code === "Space") {
-//     e.preventDefault();
-//     handlePlayClick();
-//   }
-// };
-
 //미디어 볼륨 음소거 설정
 const handleMute = (e) => {
   if (video.muted) {
@@ -59,22 +52,20 @@ const handleVolumeChange = (e) => {
     target: { value },
   } = e;
 
-  if (video.muted) {
-    video.muted = false;
-  } else {
-    video.muted = true;
-  }
+  // if (video.muted) {
+  //   video.muted = false;
+  // } else {
+  //   video.muted = true;
+  // }
 
-  console.log("이벤트", e.target.value);
-  console.log(volumeRange.value);
-  volumeValue = value; //볼륨을 올리거나,내릴때 항상 값이 저장된다 (최근값 저장용)
   video.volume = value; //미디어의 볼륨 조절( 사용자가 드래그한 벨류값으로)
+  volumeValue = value; //볼륨을 올리거나,내릴때 항상 값이 저장된다 (최근값 저장용)
 
   if (video.volume >= 0.5) {
     muteBtnIcon.classList = "fas fa-volume-up";
   } else if (video.volume >= 0.1) {
     muteBtnIcon.classList = "fas fa-volume-down";
-  } else if (video.volume === 0) {
+  } else if (video.volume <= 2.7755575615628914e-17) {
     muteBtnIcon.classList = "fas fa-volume-mute";
   }
 };
@@ -103,11 +94,6 @@ const handleTimelineChange = (e) => {
   video.currentTime = value; //미디어의 실시간 조절 ( 사용자가 드래그한 벨류값으로)
 };
 
-// const handleKeySetOff = () => {
-//   videoSetTime = !videoSetTime;
-// };
-
-//미디어이
 const handleFullScreen = () => {
   //영상뿐만 아니라 컨트롤러 부분도 다 full 스크린으로 해야되기 때문에
   //템플릿에서 전체를 감싸는 Container를 만들어서 적용시킨다.
@@ -137,21 +123,27 @@ const handleKeyEvent = (e) => {
   }
   if (e.key === "ArrowUp") {
     e.preventDefault();
-    if (video.volume < 0.9) {
-      video.volume = video.volume + 0.1;
+    if (video.volume < 0.99) {
+      video.volume += 0.1;
       volumeRange.value = video.volume;
     }
   }
 
-  //볼륨 아이콘 셋팅 다시 확인하기!!!
   //비디오 key이벤트에 따른 동영상 가운데에 표시하기(유튜브처럼)
 
   if (e.key === "ArrowDown") {
     e.preventDefault();
     if (video.volume > 0.1) {
-      video.volume = video.volume - 0.1;
+      video.volume -= 0.1;
       volumeRange.value = video.volume;
     }
+  }
+  if (video.volume >= 0.5) {
+    muteBtnIcon.classList = "fas fa-volume-up";
+  } else if (video.volume >= 0.1) {
+    muteBtnIcon.classList = "fas fa-volume-down";
+  } else if (video.volume <= 2.7755575615628914e-17) {
+    muteBtnIcon.classList = "fas fa-volume-mute";
   }
 };
 
