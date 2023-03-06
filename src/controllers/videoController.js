@@ -1,6 +1,7 @@
 import Video from "../models/Video";
 import User from "../models/User";
 import Comment from "../models/Comment";
+import { async } from "regenerator-runtime";
 import session from "express-session";
 
 export const home = async (req, res) => {
@@ -12,9 +13,9 @@ export const home = async (req, res) => {
 
 export const watch = async (req, res) => {
   const { id } = req.params;
-  const video = await Video.findById(id).populate("owner");
+  const video = await Video.findById(id).populate("owner").populate("comments");
+  console.log("VIDEO", video);
   if (!video) {
-    console.log(video);
     return res.render("404", { pageTitle: "Video not found." });
   }
   return res.render("videos/watch", { pageTitle: video.title, video });
@@ -71,7 +72,7 @@ export const postUpload = async (req, res) => {
 
   // const file = req.file;  파일 업로드 옵션이 single 일떄
   const { video, thumb } = req.files; // 파일 업로드 옵션이 files 일때
-  console.log(thumb);
+
   const { title, description, hashtags } = req.body;
   try {
     const newVideo = await Video.create({
@@ -142,17 +143,11 @@ export const registerView = async (req, res) => {
 };
 
 export const createComment = async (req, res) => {
-  // console.log(req.params);
-  // console.log(req.body.text);
-  // console.log(req.session.user);
-
   const {
     params: { id },
     body: { text },
     session: { user },
   } = req;
-
-  console.log(user, text, id);
 
   const video = await Video.findById(id);
 
@@ -160,10 +155,47 @@ export const createComment = async (req, res) => {
     return res.sendStatus(404);
   }
   const comment = await Comment.create({
+    //comment 생성
     text,
     owner: user._id,
     video: id,
   });
+  video.comments.push(comment._id); // 생성된 comment를 video.comments에 넣는다
 
-  return res.sendStatus(201);
+  video.save(); // 저장한다
+  //return res.sendStatus(201); 기존에는 스타터스 코드만 보내었던 것을
+  return res.status(201).json({ newCommentId: comment._id }); // 프론트엔드에 commentid를 보낸다
+};
+
+export const removeComment = async (req, res) => {
+  console.log("요청을받았냐?");
+
+  //코멘트를 작성한 유저와 로그인한 유저 확인
+
+  //코멘트로 비디오 검색해서 해당 비디오에서 코멘트 제거
+
+  const {
+    session: { user },
+    params: { id },
+  } = req;
+  const comment = await Comment.findById(id);
+  const video = await Video.find({ comments: id });
+
+  //코멘트가 있는 비디오가 있는지 확인
+  if (!video) {
+    return res.sendStatus(404);
+  }
+
+  //코멘트를 작성한 유저id 와 로그인한 유저id 확인
+  if (comment.owner.toString() !== user._id) {
+    return res.sendStatus(404);
+  }
+  console.log("삭제전 비디오", video);
+
+  await Comment.findByIdAndDelete(id);
+  video[0].comments.splice(video[0].comments.indexOf(id), 1);
+  video[0].save(); // 저장한다
+
+  console.log("삭제후 비디오", video);
+  return res.sendStatus(200);
 };
