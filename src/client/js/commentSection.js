@@ -3,35 +3,53 @@ import { async } from "regenerator-runtime";
 const videoContainer = document.getElementById("videoContainer");
 const form = document.getElementById("commentForm");
 const removeBtn = document.querySelectorAll(".removeBtn");
+const editBtn = document.querySelectorAll(".editBtn");
 
-const addComment = (text, id) => {
+const addComment = (text, id, name) => {
   const videoComments = document.querySelector(".video__comments ul");
   const newComment = document.createElement("li");
   //❗️❗️❗️
   //백엔드에서 보낸 json형식의 코멘트의id를
   //프론트엔드에서 json 형식으로 받아서
   // dataset.id 에 넣는다
-  // newComment.dataset.id = id;
+  newComment.dataset.id = id;
   //❗️❗️❗️
   newComment.className = "video__comment";
+  const scripDiv = document.createElement("div");
+  const btnDiv = document.createElement("div");
+  const scripIcon = document.createElement("i");
+  const editIcon = document.createElement("i");
+  const trashIcon = document.createElement("i");
 
-  const icon = document.createElement("i");
-  icon.className = "fas fa-comment";
+  const scripSpan = document.createElement("span");
+  const removeSpan = document.createElement("span");
+  const editSpan = document.createElement("span");
 
-  const span = document.createElement("span");
-  span.innerText = ` ${text}`;
+  scripIcon.className = "fas fa-comment";
+  editIcon.className = "fas fa-edit";
+  trashIcon.className = "fas fa-trash-alt";
+  scripSpan.className = "video__comment__scrip_text";
 
-  const span2 = document.createElement("span");
-  span2.dataset.id = id;
-  span2.className = "removeBtn";
-  span2.innerText = "❌";
+  scripDiv.className = "video__comment__scrip";
+  btnDiv.className = "video__comment__Btn";
+  removeSpan.className = "editBtn";
+  editSpan.className = "updateBtn";
 
-  span2.addEventListener("click", (e) => handleRemove(e));
+  scripSpan.innerText = `${name} `;
+  scripIcon.textContent = text;
+
+  removeSpan.addEventListener("click", (e) => handleRemove(e));
 
   videoComments.prepend(newComment); // ul 태그안에 <재일 먼저> li 태그를 넣음
-  newComment.appendChild(icon); // li 태그 안에 <재일 마지막에>icon을 넣음
-  newComment.appendChild(span); // li 태그 안에 <재일 마지막에>span을 넣음
-  newComment.appendChild(span2); // li 태그 안에 <재일 마지막에>span을 넣음
+  newComment.appendChild(scripDiv); // li 태그 안에 <재일 마지막에> div을 넣음
+  newComment.appendChild(btnDiv); // li 태그 안에 <재일 마지막에> div2을 넣음
+  // scripDiv.appendChild(scripIcon); // scripDiv 태그 안에 <재일 마지막에>icon을 넣음
+  scripDiv.appendChild(scripSpan); // scripDiv 태그 안에 <재일 마지막에>span을 넣음
+  scripSpan.appendChild(scripIcon);
+  btnDiv.appendChild(editSpan); // btnDiv 태그 안에 <재일 마지막에>span3을 넣음
+  btnDiv.appendChild(removeSpan); // btnDiv 태그 안에 <재일 마지막에>span2을 넣음
+  editSpan.appendChild(editIcon);
+  removeSpan.appendChild(trashIcon);
 };
 
 const handleSubmit = async (e) => {
@@ -54,8 +72,9 @@ const handleSubmit = async (e) => {
 
   if (response.status === 201) {
     textarea.value = "";
-    const { newCommentId } = await response.json(); //백엔드에서 json형식으로 response 한 data를 받을수있다.
-    addComment(text, newCommentId);
+    const { newCommentId, username } = await response.json(); //백엔드에서 json형식으로 response 한 data를 받을수있다.
+
+    addComment(text, newCommentId, username);
   }
 };
 
@@ -66,25 +85,29 @@ if (form) {
 //자식 엘리먼트 이벤트리스너 만들기
 
 const handleRemove = async (e) => {
-  // console.log("클릭");
-  // console.log(e.target.dataset.id);
-  // console.log(e.target);
-  // console.log(e);
-  const {
-    target: {
-      dataset: { id },
-    },
-  } = e;
+  const parent = e.target.parentElement.parentElement.parentElement; //부모 요소 선택
 
-  console.log("코멘트 아이디", id);
+  console.log(parent);
+  const id = parent.dataset.id;
+  console.log(id);
+  if (confirm("정말로 삭제하시겠습니까?")) {
+    await fetch(`/api/comment/${id}/remove`, {
+      method: "DELETE",
+    });
+    parent.remove();
+  }
+};
 
-  await fetch(`/api/comment/${id}/remove`, {
-    method: "DELETE",
-  });
+const handleEdit = async () => {
+  console.log("zmfflr");
 };
 
 removeBtn.forEach((i) => {
   i.addEventListener("click", (e) => handleRemove(e));
+});
+
+editBtn.forEach((i) => {
+  i.addEventListener("click", (e) => handleEdit(e));
 });
 
 //1)삭제버튼

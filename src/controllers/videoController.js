@@ -14,7 +14,7 @@ export const home = async (req, res) => {
 export const watch = async (req, res) => {
   const { id } = req.params;
   const video = await Video.findById(id).populate("owner").populate("comments");
-  console.log("VIDEO", video);
+
   if (!video) {
     return res.render("404", { pageTitle: "Video not found." });
   }
@@ -146,25 +146,30 @@ export const createComment = async (req, res) => {
   const {
     params: { id },
     body: { text },
-    session: { user },
+    session: { user: sessionUser },
   } = req;
 
   const video = await Video.findById(id);
-
+  const user = await User.findById(sessionUser._id);
   if (!video) {
     return res.sendStatus(404);
   }
   const comment = await Comment.create({
     //comment 생성
     text,
-    owner: user._id,
+    owner: sessionUser._id,
+    ownerName: user.name,
     video: id,
   });
-  video.comments.push(comment._id); // 생성된 comment를 video.comments에 넣는다
 
+  video.comments.push(comment._id); // 생성된 comment를 video.comments에 넣는다
+  user.comments.push(comment._id);
   video.save(); // 저장한다
+  user.save();
   //return res.sendStatus(201); 기존에는 스타터스 코드만 보내었던 것을
-  return res.status(201).json({ newCommentId: comment._id }); // 프론트엔드에 commentid를 보낸다
+  return res
+    .status(201)
+    .json({ newCommentId: comment._id, username: user.username }); // 프론트엔드에 commentid를 보낸다
 };
 
 export const removeComment = async (req, res) => {
@@ -175,27 +180,32 @@ export const removeComment = async (req, res) => {
   //코멘트로 비디오 검색해서 해당 비디오에서 코멘트 제거
 
   const {
-    session: { user },
+    session: { user: sessionUser },
     params: { id },
   } = req;
   const comment = await Comment.findById(id);
-  const video = await Video.find({ comments: id });
 
+  const video = await Video.findById(comment.video);
+
+  const user = await User.findById(sessionUser._id);
   //코멘트가 있는 비디오가 있는지 확인
-  if (!video) {
+  if (!video || !user) {
     return res.sendStatus(404);
   }
 
-  //코멘트를 작성한 유저id 와 로그인한 유저id 확인
-  if (comment.owner.toString() !== user._id) {
+  // //코멘트를 작성한 유저id 와 로그인한 유저id 확인
+  if (user._id.toString() !== comment.owner.toString()) {
     return res.sendStatus(404);
   }
-  console.log("삭제전 비디오", video);
 
   await Comment.findByIdAndDelete(id);
-  video[0].comments.splice(video[0].comments.indexOf(id), 1);
-  video[0].save(); // 저장한다
 
-  console.log("삭제후 비디오", video);
+  video.comments.splice(video.comments.indexOf(id), 1);
+  video.save();
+
+  user.comments.splice(user.comments.indexOf(id), 1);
+  user.save();
+
+  // console.log("삭제후 비디오", video);
   return res.sendStatus(200);
 };

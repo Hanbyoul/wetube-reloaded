@@ -18,18 +18,101 @@
     }
   }
 }
+.video__comment-form {
+  max-width: 720px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  textarea {
+    width: 500px;
+    background-color: #191919;
+    color: white;
+    resize: none;
+    outline: none;
+  }
+
+  .loginUser {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-right: 15px;
+    i {
+      font-size: 100px;
+      margin-bottom: 15px;
+    }
+  }
+  .header__avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+
+    margin-bottom: 15px;
+  }
+  .userName {
+    margin: 50px;
+  }
+
+  button {
+    all: unset;
+  }
+
+  button {
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    margin-top: 100px;
+    margin-left: 15px;
+    width: 100px;
+    height: 60px;
+    border-radius: 20px;
+    background-color: gray;
+    text-align: center;
+    cursor: pointer;
+  }
+}
 .video__comments {
   display: flex;
   flex-direction: column;
-  max-width: 320px;
+  max-width: 650px;
   width: 100%;
   margin: 0 auto;
   margin-top: 20px;
+
   .video__comment {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: 100%;
     padding: 10px;
-    border-radius: 9999px;
+    border-radius: 15px;
     background-color: white;
     color: black;
     margin-bottom: 10px;
+
+    .video__comment__scrip {
+      display: flex;
+      padding: 15px;
+      overflow: auto;
+    }
+    .video__comment__scrip_text {
+      display: block;
+      max-width: 550px;
+      padding: 10px;
+      i {
+        margin-top: 15px;
+        display: block;
+      }
+    }
+    .video__comment__Btn {
+      display: flex;
+      margin-right: 15px;
+      i {
+        font-size: 20px;
+        padding: 0px 5px;
+        cursor: pointer;
+      }
+    }
   }
 }

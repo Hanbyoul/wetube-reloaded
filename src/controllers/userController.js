@@ -130,6 +130,7 @@ export const finishGithubLogin = async (req, res) => {
 
     req.session.loggedIn = true;
     req.session.user = user;
+    req.flash("success", "환영합니다~");
     return res.redirect("/");
   } else {
     return res.redirect("/login");
@@ -201,6 +202,7 @@ export const finishKakaoLogin = async (req, res) => {
 
     req.session.loggedIn = true;
     req.session.user = user;
+    req.flash("success", "환영합니다~");
     return res.redirect("/");
   } else {
     return res.redirect("/login");

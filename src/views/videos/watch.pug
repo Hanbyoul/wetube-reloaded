@@ -31,16 +31,32 @@ block content
     if loggedIn
         div.video__add-comments
             form.video__comment-form#commentForm
-                textarea(cols="30", rows="10", placeholder="Write a nice comment...")
+                div.loginUser 
+                    if loggedInUser.avatarUrl === undefined
+                        i.fas.fa-user
+                        span #{loggedInUser.username} 
+                    else 
+                        if (loggedInUser.avatarUrl.startsWith("uploads"))
+                            img.header__avatar(src="/"+loggedInUser.avatarUrl)
+                        if (loggedInUser.avatarUrl.startsWith("http"))
+                            img.header__avatar(src=loggedInUser.avatarUrl)
+                        span #{loggedInUser.username} 
+                textarea(cols="20", rows="10", placeholder="Write a nice comment...")
                 button Add Comment
     div.video__comments
         ul
             each comment in video.comments.reverse()
-                li.video__comment
-                    i.fas.fa-comment
-                    span #{comment.text}
+                li.video__comment(data-id=comment._id)
+                    div.video__comment__scrip
+                        span.video__comment__scrip_text #{comment.ownerName}  
+                            i.fas.fa-comment
+                                |#{comment.text}
                     if String(loggedInUser._id) === String(comment.owner)
-                        span.removeBtn(data-id=comment._id) ❌
+                        div.video__comment__Btn
+                                span.editBtn
+                                    i.fas.fa-edit
+                                span.removeBtn
+                                    i.fas.fa-trash-alt
 block scripts 
     script(src="/assets/js/videoPlayer.js") 
     if loggedIn
