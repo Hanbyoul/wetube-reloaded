@@ -148,66 +148,53 @@ export const createComment = async (req, res) => {
     body: { text },
     session: { user: sessionUser },
   } = req;
-
   const video = await Video.findById(id);
   const user = await User.findById(sessionUser._id);
+
   if (!video) {
     return res.sendStatus(404);
   }
   const comment = await Comment.create({
-    //comment 생성
     text,
     owner: sessionUser._id,
     ownerName: user.username,
     video: id,
   });
 
-  video.comments.push(comment._id); // 생성된 comment를 video.comments에 넣는다
+  video.comments.push(comment._id);
   user.comments.push(comment._id);
-  video.save(); // 저장한다
+  video.save();
   user.save();
-  //return res.sendStatus(201); 기존에는 스타터스 코드만 보내었던 것을
+
   return res.status(201).json({
     newCommentId: comment._id,
     username: user.username,
-  }); // 프론트엔드에 commentid를 보낸다
+  });
 };
 
 export const removeComment = async (req, res) => {
-  console.log("요청을받았냐?");
-
-  //코멘트를 작성한 유저와 로그인한 유저 확인
-
-  //코멘트로 비디오 검색해서 해당 비디오에서 코멘트 제거
-
   const {
     session: { user: sessionUser },
     params: { id },
   } = req;
   const comment = await Comment.findById(id);
-
   const video = await Video.findById(comment.video);
-
   const user = await User.findById(sessionUser._id);
-  //코멘트가 있는 비디오가 있는지 확인
+
   if (!video || !user) {
     return res.sendStatus(404);
   }
 
-  // //코멘트를 작성한 유저id 와 로그인한 유저id 확인
   if (user._id.toString() !== comment.owner.toString()) {
     return res.sendStatus(404);
   }
 
   await Comment.findByIdAndDelete(id);
-
   video.comments.splice(video.comments.indexOf(id), 1);
   video.save();
-
   user.comments.splice(user.comments.indexOf(id), 1);
   user.save();
 
-  // console.log("삭제후 비디오", video);
   return res.sendStatus(200);
 };
 
@@ -252,7 +239,6 @@ export const likeComment = async (req, res) => {
     comment.like.splice(comment.like.indexOf(user.username), 1);
   }
   comment.save();
-  console.log("좋아요 !!!", comment);
-  console.log(userChecked);
+
   return res.sendStatus(201);
 };

@@ -11,12 +11,7 @@ let action = false;
 const addComment = (text, id, name) => {
   const videoComments = document.querySelector(".video__comments ul");
   const newComment = document.createElement("li");
-  //❗️❗️❗️
-  //백엔드에서 보낸 json형식의 코멘트의id를
-  //프론트엔드에서 json 형식으로 받아서
-  // dataset.id 에 넣는다
   newComment.dataset.id = id;
-  //❗️❗️❗️
   newComment.className = "video__comment";
   const scripDiv = document.createElement("div");
   const btnDiv = document.createElement("div");
@@ -43,14 +38,14 @@ const addComment = (text, id, name) => {
 
   removeSpan.addEventListener("click", (e) => handleRemove(e));
   editSpan.addEventListener("click", (e) => handleEdit(e));
-  videoComments.prepend(newComment); // ul 태그안에 <재일 먼저> li 태그를 넣음
-  newComment.appendChild(scripDiv); // li 태그 안에 <재일 마지막에> div을 넣음
-  newComment.appendChild(btnDiv); // li 태그 안에 <재일 마지막에> div2을 넣음
-  newComment.prepend(nullSpan); // 날짜 date 공간 채우기
-  scripDiv.appendChild(scripSpan); // scripDiv 태그 안에 <재일 마지막에>span을 넣음
+  videoComments.prepend(newComment);
+  newComment.appendChild(scripDiv);
+  newComment.appendChild(btnDiv);
+  newComment.prepend(nullSpan);
+  scripDiv.appendChild(scripSpan);
   scripSpan.appendChild(scripIcon);
-  btnDiv.appendChild(editSpan); // btnDiv 태그 안에 <재일 마지막에>span3을 넣음
-  btnDiv.appendChild(removeSpan); // btnDiv 태그 안에 <재일 마지막에>span2을 넣음
+  btnDiv.appendChild(editSpan);
+  btnDiv.appendChild(removeSpan);
   editSpan.appendChild(editIcon);
   removeSpan.appendChild(trashIcon);
 };
@@ -87,15 +82,10 @@ if (form) {
   form.addEventListener("submit", handleSubmit);
 }
 
-//자식 엘리먼트 이벤트리스너 만들기
-
 const handleRemove = async (e) => {
   if (!action) {
-    const parent = e.target.parentElement.parentElement.parentElement; //부모 요소 선택
-
-    console.log(parent);
+    const parent = e.target.parentElement.parentElement.parentElement;
     const id = parent.dataset.id;
-    console.log(id);
     if (confirm("정말로 삭제하시겠습니까?")) {
       await fetch(`/api/comment/${id}/remove`, {
         method: "DELETE",
@@ -112,8 +102,6 @@ const handleEdit = (e) => {
   const textArea = parent.childNodes[1].firstElementChild.lastChild;
   const buttonArea = parent.nextSibling;
   const myText = parent.childNodes[1].firstElementChild.firstElementChild;
-  console.log("확인", parent.childNodes[1]);
-  // console.log("확인", parent.childNodes[1].firstElementChild.lastChild);
   const editTextarea = document.createElement("textarea");
   editTextarea.className = "edit__textArea";
 
@@ -139,7 +127,6 @@ const handleEdit = (e) => {
 };
 
 const handleEditSubmit = async (e, id) => {
-  console.log(id);
   const textArea =
     e.target.previousSibling.childNodes[1].firstElementChild.lastChild;
   const myText =
@@ -197,38 +184,18 @@ commentDate.forEach((i) => {
 likeBtn.forEach((i) => i.addEventListener("click", (e) => handleLike(e)));
 
 const handleLike = async (e) => {
-  console.log(e.target);
   const like = e.target;
-  // isLike = !isLike;
-  console.log(like.className);
+  const id = e.target.parentElement.parentElement.dataset.id;
 
   if (like.className === "fas fa-thumbs-up") {
     like.className = "fas fa-thumbs-up active";
-
     like.innerText++;
   } else {
     like.className = "fas fa-thumbs-up";
-
     like.innerText--;
   }
-  // if (isLike) {
-  //   like.className = "far fa-thumbs-up active";
-  //   like.innerText++;
-  // } else {
-  //   like.className = "far fa-thumbs-up";
-  //   like.innerText--;
-  // }
-
-  const id = e.target.parentElement.parentElement.dataset.id;
 
   await fetch(`/api/comment/${id}/like`, {
     method: "POST",
   });
 };
-//왓치 템플릿에서
-// 로그인한 유저네임이 코멘트 like 배열에 있다면
-// fas.fa-thumbs 아이콘 클래스명 active 변경
-// 없다면 기본 아이콘으로
-
-// JS에서는 그냥 on/off??
-//
