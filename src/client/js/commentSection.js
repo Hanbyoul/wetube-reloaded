@@ -32,18 +32,17 @@ const addComment = (text, id, name) => {
 
   scripDiv.className = "video__comment__scrip";
   btnDiv.className = "video__comment__Btn";
-  removeSpan.className = "editBtn";
-  editSpan.className = "updateBtn";
+  removeSpan.className = "removeBtn";
+  editSpan.className = "editBtn";
 
   scripSpan.innerText = `${name} `;
   scripIcon.textContent = text;
 
   removeSpan.addEventListener("click", (e) => handleRemove(e));
-
+  editSpan.addEventListener("click", (e) => handleEdit(e));
   videoComments.prepend(newComment); // ul 태그안에 <재일 먼저> li 태그를 넣음
   newComment.appendChild(scripDiv); // li 태그 안에 <재일 마지막에> div을 넣음
   newComment.appendChild(btnDiv); // li 태그 안에 <재일 마지막에> div2을 넣음
-  // scripDiv.appendChild(scripIcon); // scripDiv 태그 안에 <재일 마지막에>icon을 넣음
   scripDiv.appendChild(scripSpan); // scripDiv 태그 안에 <재일 마지막에>span을 넣음
   scripSpan.appendChild(scripIcon);
   btnDiv.appendChild(editSpan); // btnDiv 태그 안에 <재일 마지막에>span3을 넣음
@@ -98,8 +97,71 @@ const handleRemove = async (e) => {
   }
 };
 
-const handleEdit = async () => {
-  console.log("zmfflr");
+const handleEdit = (e) => {
+  const parent = e.target.parentElement.parentElement.parentElement;
+  const id = parent.dataset.id;
+  const textArea = parent.firstElementChild.firstElementChild.lastChild;
+  const buttonArea = parent.nextSibling;
+  const myText = parent.firstElementChild.firstElementChild.firstElementChild;
+  const editTextarea = document.createElement("textarea");
+  editTextarea.className = "edit__textArea";
+
+  if (textArea.nodeName !== "TEXTAREA") {
+    myText.style.display = "none";
+    editTextarea.value = myText.innerText;
+    myText.insertAdjacentElement("afterend", editTextarea);
+    editTextarea.focus();
+  } else {
+    myText.style.display = "block";
+    textArea.remove();
+  }
+
+  if (buttonArea.nodeName !== "BUTTON") {
+    const editBtn = document.createElement("button");
+    editBtn.className = "edit__button";
+    parent.insertAdjacentElement("afterend", editBtn);
+    editBtn.innerText = "Update";
+    editBtn.addEventListener("click", (e) => handleEditSubmit(e, id));
+  } else {
+    buttonArea.remove();
+  }
+  // 서브밋 전송을 누르면 true 바뀌고
+  // editTextarea 의 value 가 myText의 innerText로 변경되고,
+  // myText의 display가 block 상태가 되며
+  // editTextarea 요소와 버튼 요소가 제거된다.
+
+  //버튼에 필요한 데이터
+  // datasetId
+  //
+
+  // 버튼 클릭시 백엔드로 text 전송 >> 컨트롤러로 해당 text 업데이트
+};
+
+const handleEditSubmit = async (e, id) => {
+  console.log(id);
+  const textArea =
+    e.target.previousSibling.firstElementChild.firstElementChild.lastChild;
+
+  const myText =
+    e.target.previousSibling.firstElementChild.firstElementChild
+      .firstElementChild;
+
+  const text = textArea.value;
+
+  const response = await fetch(`/api/comment/${id}/edit`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ text }),
+  });
+
+  if (response.status === 201) {
+    myText.innerText = textArea.value;
+    textArea.remove();
+    e.target.remove();
+    myText.style.display = "block";
+  }
 };
 
 removeBtn.forEach((i) => {

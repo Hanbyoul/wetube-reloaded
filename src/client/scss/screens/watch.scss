@@ -9,6 +9,15 @@
   .video__createdAt {
     font-size: 12px;
   }
+  a {
+    max-width: 120px;
+  }
+  .edit_video:hover {
+    color: greenyellow;
+  }
+  .delete_video:hover {
+    color: red;
+  }
   .video__owner {
     margin-bottom: 5px;
     font-size: 14px;
@@ -66,7 +75,7 @@
     width: 100px;
     height: 60px;
     border-radius: 20px;
-    background-color: gray;
+    background-color: #0a3d62;
     text-align: center;
     cursor: pointer;
   }
@@ -78,6 +87,22 @@
   width: 100%;
   margin: 0 auto;
   margin-top: 20px;
+
+  button {
+    all: unset;
+  }
+  .edit__button {
+    display: block;
+    float: right;
+    margin-bottom: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    width: 90px;
+    height: 35px;
+    border-radius: 20px;
+    background-color: #0a3d62;
+    text-align: center;
+    cursor: pointer;
+  }
 
   .video__comment {
     display: flex;
@@ -91,6 +116,13 @@
     color: black;
     margin-bottom: 10px;
 
+    .edit__textArea {
+      width: 100%;
+      margin-top: 20px;
+      min-width: 450px;
+      height: 100%;
+      resize: none;
+    }
     .video__comment__scrip {
       display: flex;
       padding: 15px;

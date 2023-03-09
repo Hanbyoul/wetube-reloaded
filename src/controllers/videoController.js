@@ -158,7 +158,7 @@ export const createComment = async (req, res) => {
     //comment 생성
     text,
     owner: sessionUser._id,
-    ownerName: user.name,
+    ownerName: user.username,
     video: id,
   });
 
@@ -208,4 +208,25 @@ export const removeComment = async (req, res) => {
 
   // console.log("삭제후 비디오", video);
   return res.sendStatus(200);
+};
+
+export const editComment = async (req, res) => {
+  const {
+    params: { id },
+    body: { text },
+    session: { user: sessionUser },
+  } = req;
+  const comment = await Comment.findById(id);
+
+  if (!comment) {
+    return res.sendStatus(404);
+  }
+
+  if (sessionUser._id !== comment.owner.toString()) {
+    return res.sendStatus(404);
+  }
+
+  comment.text = text;
+  comment.save();
+  return res.sendStatus(201);
 };
