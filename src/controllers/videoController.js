@@ -167,9 +167,10 @@ export const createComment = async (req, res) => {
   video.save(); // 저장한다
   user.save();
   //return res.sendStatus(201); 기존에는 스타터스 코드만 보내었던 것을
-  return res
-    .status(201)
-    .json({ newCommentId: comment._id, username: user.username }); // 프론트엔드에 commentid를 보낸다
+  return res.status(201).json({
+    newCommentId: comment._id,
+    username: user.username,
+  }); // 프론트엔드에 commentid를 보낸다
 };
 
 export const removeComment = async (req, res) => {
@@ -228,5 +229,30 @@ export const editComment = async (req, res) => {
 
   comment.text = text;
   comment.save();
+  return res.sendStatus(201);
+};
+
+export const likeComment = async (req, res) => {
+  const {
+    params: { id },
+    session: { user },
+  } = req;
+
+  const comment = await Comment.findById(id);
+
+  if (!comment) {
+    return res.sendStatus(404);
+  }
+
+  const userChecked = comment.like.includes(user.username);
+
+  if (!userChecked) {
+    comment.like.push(user.username);
+  } else {
+    comment.like.splice(comment.like.indexOf(user.username), 1);
+  }
+  comment.save();
+  console.log("좋아요 !!!", comment);
+  console.log(userChecked);
   return res.sendStatus(201);
 };

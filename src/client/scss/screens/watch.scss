@@ -115,7 +115,14 @@
     background-color: white;
     color: black;
     margin-bottom: 10px;
-
+    ._date {
+      font-size: 12px;
+      width: 50px;
+      position: absolute;
+      color: #9ca3af;
+      margin-bottom: 92px;
+      font-weight: 500;
+    }
     .edit__textArea {
       width: 100%;
       margin-top: 20px;
@@ -144,6 +151,32 @@
         font-size: 20px;
         padding: 0px 5px;
         cursor: pointer;
+      }
+    }
+    .video__comment_like {
+      // border: 3px solid #353b48;
+      // width: 60px;
+      // height: 60px;
+      // border-radius: 10px;
+      // display: flex;
+      // justify-content: center;
+      // align-items: center;
+      margin-right: 10px;
+      i {
+        border: 3px solid #353b48;
+        border-radius: 10px;
+        font-size: 20px;
+        width: 100%;
+        min-width: 60px;
+        height: 40px;
+        text-align: center;
+        padding-top: 20px;
+        cursor: pointer;
+      }
+      .active {
+        color: #00a8ff;
+        border: 3px solid #00a8ff;
+        border-radius: 10px;
       }
     }
   }

@@ -4,6 +4,9 @@ const videoContainer = document.getElementById("videoContainer");
 const form = document.getElementById("commentForm");
 const removeBtn = document.querySelectorAll(".removeBtn");
 const editBtn = document.querySelectorAll(".editBtn");
+const commentDate = document.querySelectorAll(".video__comment ._date");
+const likeBtn = document.querySelectorAll(".video__comment_like");
+let action = false;
 
 const addComment = (text, id, name) => {
   const videoComments = document.querySelector(".video__comments ul");
@@ -20,7 +23,7 @@ const addComment = (text, id, name) => {
   const scripIcon = document.createElement("i");
   const editIcon = document.createElement("i");
   const trashIcon = document.createElement("i");
-
+  const nullSpan = document.createElement("span");
   const scripSpan = document.createElement("span");
   const removeSpan = document.createElement("span");
   const editSpan = document.createElement("span");
@@ -29,7 +32,7 @@ const addComment = (text, id, name) => {
   editIcon.className = "fas fa-edit";
   trashIcon.className = "fas fa-trash-alt";
   scripSpan.className = "video__comment__scrip_text";
-
+  nullSpan.className = "_date";
   scripDiv.className = "video__comment__scrip";
   btnDiv.className = "video__comment__Btn";
   removeSpan.className = "removeBtn";
@@ -43,6 +46,7 @@ const addComment = (text, id, name) => {
   videoComments.prepend(newComment); // ul 태그안에 <재일 먼저> li 태그를 넣음
   newComment.appendChild(scripDiv); // li 태그 안에 <재일 마지막에> div을 넣음
   newComment.appendChild(btnDiv); // li 태그 안에 <재일 마지막에> div2을 넣음
+  newComment.prepend(nullSpan); // 날짜 date 공간 채우기
   scripDiv.appendChild(scripSpan); // scripDiv 태그 안에 <재일 마지막에>span을 넣음
   scripSpan.appendChild(scripIcon);
   btnDiv.appendChild(editSpan); // btnDiv 태그 안에 <재일 마지막에>span3을 넣음
@@ -53,27 +57,29 @@ const addComment = (text, id, name) => {
 
 const handleSubmit = async (e) => {
   e.preventDefault();
-  const textarea = form.querySelector("textarea");
-  const text = textarea.value;
-  const videoId = videoContainer.dataset.id;
+  if (!action) {
+    const textarea = form.querySelector("textarea");
+    const text = textarea.value;
+    const videoId = videoContainer.dataset.id;
 
-  if (text === "") {
-    return;
-  }
+    if (text === "") {
+      return;
+    }
 
-  const response = await fetch(`/api/videos/${videoId}/comment`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ text }),
-  });
+    const response = await fetch(`/api/videos/${videoId}/comment`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ text }),
+    });
 
-  if (response.status === 201) {
-    textarea.value = "";
-    const { newCommentId, username } = await response.json(); //백엔드에서 json형식으로 response 한 data를 받을수있다.
+    if (response.status === 201) {
+      textarea.value = "";
+      const { newCommentId, username } = await response.json(); //백엔드에서 json형식으로 response 한 data를 받을수있다.
 
-    addComment(text, newCommentId, username);
+      addComment(text, newCommentId, username);
+    }
   }
 };
 
@@ -84,25 +90,30 @@ if (form) {
 //자식 엘리먼트 이벤트리스너 만들기
 
 const handleRemove = async (e) => {
-  const parent = e.target.parentElement.parentElement.parentElement; //부모 요소 선택
+  if (!action) {
+    const parent = e.target.parentElement.parentElement.parentElement; //부모 요소 선택
 
-  console.log(parent);
-  const id = parent.dataset.id;
-  console.log(id);
-  if (confirm("정말로 삭제하시겠습니까?")) {
-    await fetch(`/api/comment/${id}/remove`, {
-      method: "DELETE",
-    });
-    parent.remove();
+    console.log(parent);
+    const id = parent.dataset.id;
+    console.log(id);
+    if (confirm("정말로 삭제하시겠습니까?")) {
+      await fetch(`/api/comment/${id}/remove`, {
+        method: "DELETE",
+      });
+      parent.remove();
+    }
   }
 };
 
 const handleEdit = (e) => {
+  action = !action;
   const parent = e.target.parentElement.parentElement.parentElement;
   const id = parent.dataset.id;
-  const textArea = parent.firstElementChild.firstElementChild.lastChild;
+  const textArea = parent.childNodes[1].firstElementChild.lastChild;
   const buttonArea = parent.nextSibling;
-  const myText = parent.firstElementChild.firstElementChild.firstElementChild;
+  const myText = parent.childNodes[1].firstElementChild.firstElementChild;
+  console.log("확인", parent.childNodes[1]);
+  // console.log("확인", parent.childNodes[1].firstElementChild.lastChild);
   const editTextarea = document.createElement("textarea");
   editTextarea.className = "edit__textArea";
 
@@ -125,29 +136,15 @@ const handleEdit = (e) => {
   } else {
     buttonArea.remove();
   }
-  // 서브밋 전송을 누르면 true 바뀌고
-  // editTextarea 의 value 가 myText의 innerText로 변경되고,
-  // myText의 display가 block 상태가 되며
-  // editTextarea 요소와 버튼 요소가 제거된다.
-
-  //버튼에 필요한 데이터
-  // datasetId
-  //
-
-  // 버튼 클릭시 백엔드로 text 전송 >> 컨트롤러로 해당 text 업데이트
 };
 
 const handleEditSubmit = async (e, id) => {
   console.log(id);
   const textArea =
-    e.target.previousSibling.firstElementChild.firstElementChild.lastChild;
-
+    e.target.previousSibling.childNodes[1].firstElementChild.lastChild;
   const myText =
-    e.target.previousSibling.firstElementChild.firstElementChild
-      .firstElementChild;
-
+    e.target.previousSibling.childNodes[1].firstElementChild.firstElementChild;
   const text = textArea.value;
-
   const response = await fetch(`/api/comment/${id}/edit`, {
     method: "POST",
     headers: {
@@ -155,13 +152,13 @@ const handleEditSubmit = async (e, id) => {
     },
     body: JSON.stringify({ text }),
   });
-
   if (response.status === 201) {
     myText.innerText = textArea.value;
     textArea.remove();
     e.target.remove();
     myText.style.display = "block";
   }
+  action = false;
 };
 
 removeBtn.forEach((i) => {
@@ -172,28 +169,66 @@ editBtn.forEach((i) => {
   i.addEventListener("click", (e) => handleEdit(e));
 });
 
-//1)삭제버튼
-//2)수정버튼
-//3)좋아요버튼
-//4)댓글 갯수 UI
+commentDate.forEach((i) => {
+  const date = Number(i.innerText);
+  const now = new Date();
+  const seconds = Math.floor((now - date) / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+  const months = Math.floor(days / 30);
+  const years = Math.floor(months / 12);
 
-// 삭제 delete 참조
-// 댓글의 주인만 버튼이 보인다   ---HTML에서 사용자확인
-// 해당 댓글의 commentId로 DELETE
-// router 생성하여 DELETE메소드 전송
-// 백엔드에서 DELETE 전송할때 사용자가 맞는지 ---백엔드에서 사용자확인
-// User, Video DB에서도 연동되게 지워야함
-// 삭제후 status 코드를 받고 이를기반으로
-// Element를 삭제하는 함수를 만들어 실행한다.
+  if (seconds < 60) {
+    return (i.innerText = "방금 전");
+  } else if (minutes < 60) {
+    return (i.innerText = `${minutes}분 전`);
+  } else if (hours < 24) {
+    return (i.innerText = `${hours}시간 전`);
+  } else if (days < 30) {
+    return (i.innerText = `${days}일 전`);
+  } else if (months < 12) {
+    return (i.innerText = `${months}개월 전`);
+  } else {
+    return (i.innerText = `${years}년 전`);
+  }
+});
 
-// 수정 edit참조
-// 댓글의 주인만 버튼이 보인다
-// 해당 댓글의 commentId로 text를 수정하여 POST
+likeBtn.forEach((i) => i.addEventListener("click", (e) => handleLike(e)));
 
-// 좋아요
-// 로그인한 유저만 버튼이 보인다
-// 로그인한 유저가 (작성자 포함) 해당 코멘트에 1회 좋아요가능 ,취소가능
-// db에 유저id를 조회해서 없을 경우 좋아요 + 가능 true
-// db에 유저id를 조회해서 있을 경우 좋아요 - 가능 false
-// db에 true인 유저(좋아요 누른)의 length값으로 좋아요 갯수 추출 가능.
-// 개똒똒한데 한별이?ㅎㅎ
+const handleLike = async (e) => {
+  console.log(e.target);
+  const like = e.target;
+  // isLike = !isLike;
+  console.log(like.className);
+
+  if (like.className === "fas fa-thumbs-up") {
+    like.className = "fas fa-thumbs-up active";
+
+    like.innerText++;
+  } else {
+    like.className = "fas fa-thumbs-up";
+
+    like.innerText--;
+  }
+  // if (isLike) {
+  //   like.className = "far fa-thumbs-up active";
+  //   like.innerText++;
+  // } else {
+  //   like.className = "far fa-thumbs-up";
+  //   like.innerText--;
+  // }
+
+  const id = e.target.parentElement.parentElement.dataset.id;
+
+  await fetch(`/api/comment/${id}/like`, {
+    method: "POST",
+  });
+};
+//왓치 템플릿에서
+// 로그인한 유저네임이 코멘트 like 배열에 있다면
+// fas.fa-thumbs 아이콘 클래스명 active 변경
+// 없다면 기본 아이콘으로
+
+// JS에서는 그냥 on/off??
+//
