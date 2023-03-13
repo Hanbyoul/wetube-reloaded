@@ -179,8 +179,6 @@ export const finishKakaoLogin = async (req, res) => {
       })
     ).json();
 
-    console.log(userData);
-
     const emailData = userData.kakao_account;
     if (
       emailData.is_email_valid === false ||

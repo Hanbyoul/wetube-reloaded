@@ -15,8 +15,6 @@ module.exports = {
       filename: "css/styles.css",
     }),
   ],
-  mode: "development",
-  watch: true, //webpack이 assets를 주시하여 변경점을 감지되면 리프레시 한다
   output: {
     filename: "js/[name].js",
     path: path.resolve(__dirname, "assets"),
