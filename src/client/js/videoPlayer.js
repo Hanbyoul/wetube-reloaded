@@ -76,7 +76,7 @@ const formatTime = (seconds) =>
 
 //미디어의 전체시간 추출
 const handleLoadedMetaData = () => {
-  if (isNaN(video.duration)) {
+  if (!isNaN(video.duration)) {
     totalTime.innerText = formatTime(Math.floor(video.duration));
     timeline.max = Math.floor(video.duration);
   }
