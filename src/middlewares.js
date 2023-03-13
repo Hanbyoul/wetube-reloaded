@@ -33,7 +33,7 @@ export const publicOnlyMiddleware = (req, res, next) => {
 export const avatarUpload = multer({
   dest: "uploads/avatars/",
   limits: {
-    fileSize: 3000000,
+    fileSize: 4000000,
     //upload 할때 파일의 용량을 제한한다.
     //bytes 단위이다.
   },
