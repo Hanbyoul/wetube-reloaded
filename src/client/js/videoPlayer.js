@@ -76,8 +76,10 @@ const formatTime = (seconds) =>
 
 //미디어의 전체시간 추출
 const handleLoadedMetaData = () => {
-  totalTime.innerText = formatTime(Math.floor(video.duration));
-  timeline.max = Math.floor(video.duration);
+  if (isNaN(video.duration)) {
+    totalTime.innerText = formatTime(Math.floor(video.duration));
+    timeline.max = Math.floor(video.duration);
+  }
 };
 
 //미디어의 실시간 추출
@@ -187,7 +189,7 @@ const handleEnded = () => {
 playBtn.addEventListener("click", handlePlayClick);
 muteBtn.addEventListener("click", handleMute);
 volumeRange.addEventListener("input", handleVolumeChange);
-video.addEventListener("loadedmetadata", handleLoadedMetaData);
+video.addEventListener("canplay", handleLoadedMetaData);
 video.addEventListener("timeupdate", handleTimeUpdate);
 video.addEventListener("click", handlePlayClick);
 video.addEventListener("ended", handleEnded);
@@ -199,3 +201,5 @@ video.addEventListener("click", () => video.focus());
 video.addEventListener("keydown", (e) => {
   handleKeyEvent(e);
 });
+
+handleLoadedMetaData();
