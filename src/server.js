@@ -37,6 +37,7 @@ app.use(flash());
 app.use(localsMiddleware);
 app.use("/uploads", express.static("uploads"));
 app.use("/assets", express.static("assets"));
+app.use("/favicon", express.static("favicon"));
 app.use("/", rootRouter);
 app.use("/users", userRouter);
 app.use("/videos", videosRouter);
