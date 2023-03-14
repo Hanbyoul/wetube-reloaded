@@ -39,7 +39,8 @@
     "multer-s3": "^2.10.0",
     "node-fetch": "^2.6.1",
     "pug": "^3.0.2",
-    "regenerator-runtime": "^0.13.11"
+    "regenerator-runtime": "^0.13.11",
+    "serve-favicon": "^2.5.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.21.0",
@@ -47,6 +48,8 @@
     "@babel/node": "^7.20.7",
     "@babel/preset-env": "^7.20.2",
     "css-loader": "^6.7.3",
+    "favicons": "^7.1.1",
+    "favicons-webpack-plugin": "^6.0.0",
     "mini-css-extract-plugin": "^2.7.2",
     "nodemon": "^2.0.20",
     "sass": "^1.58.3",
