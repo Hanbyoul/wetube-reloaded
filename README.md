@@ -27,6 +27,8 @@ npm start
 <br/>
 
 ## 구성
+![스크린샷 2023-04-03 오후 7 08 11](https://user-images.githubusercontent.com/99850326/229480511-e34c3c61-9fd1-47c5-a9e9-55ff68dee23f.png)
+
 
 <br/>
 
