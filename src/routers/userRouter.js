@@ -21,11 +21,6 @@ const userRouter = express.Router();
 
 userRouter.get("/logout", protectorMiddleware, logout);
 
-// .all() get,post,delete,pull 메소드 모두 middleware를 사용할 수 있다.
-
-//protectorMiddleware - 로그인 된 유저만 이용할 수 있게
-//publicOnlyMiddleware - 로그인 되지않은 유저만 이용할 수 있게
-
 userRouter
   .route("/edit")
   .all(protectorMiddleware)

@@ -71,7 +71,7 @@ const handleSubmit = async (e) => {
 
     if (response.status === 201) {
       textarea.value = "";
-      const { newCommentId, username } = await response.json(); //백엔드에서 json형식으로 response 한 data를 받을수있다.
+      const { newCommentId, username } = await response.json();
 
       addComment(text, newCommentId, username);
     }

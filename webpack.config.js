@@ -17,7 +17,7 @@ module.exports = {
   output: {
     filename: "js/[name].js",
     path: path.resolve(__dirname, "assets"),
-    clean: true, //output이 실행되기전(build) 클린해준다
+    clean: true,
   },
   module: {
     rules: [
@@ -32,7 +32,6 @@ module.exports = {
       },
       {
         test: /\.scss$/,
-        //style-loader 대신 MiniCssExtractPlugin를 사용한다.
         use: [MiniCssExtractPlugin.loader, "css-loader", "sass-loader"],
       },
     ],

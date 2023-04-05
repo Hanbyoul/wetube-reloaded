@@ -27,10 +27,10 @@ export const getEdit = async (req, res) => {
     user: { _id },
   } = req.session;
   const video = await Video.findById(id);
+
   if (!video) {
     return res.status(404).render("404", { pageTitle: "Video not found." });
   }
-
   if (String(video.owner) !== String(_id)) {
     req.flash("error", "You are not the owner of the video");
     return res.status(403).redirect("/");
@@ -41,22 +41,24 @@ export const getEdit = async (req, res) => {
 export const postEdit = async (req, res) => {
   const { id } = req.params;
   const { title, description, hashtags } = req.body;
-
   const video = await Video.findById(id);
   const {
     user: { _id },
   } = req.session;
+
   if (!video) {
     return res.status(404).render("404", { pageTitle: "Video not found." });
   }
   if (String(video.owner) !== String(_id)) {
     return res.status(403).redirect("/");
   }
+
   await Video.findByIdAndUpdate(id, {
     title,
     description,
     hashtags: Video.HashTagsForm(hashtags),
   });
+
   req.flash("success", "Changes saved");
   return res.redirect(`/videos/${id}`);
 };
@@ -69,10 +71,7 @@ export const postUpload = async (req, res) => {
   const {
     user: { _id },
   } = req.session;
-
-  // const file = req.file;  파일 업로드 옵션이 single 일떄
-  const { video, thumb } = req.files; // 파일 업로드 옵션이 files 일때
-
+  const { video, thumb } = req.files;
   const { title, description, hashtags } = req.body;
   const isHeroku = process.env.NODE_ENV === "production";
 
@@ -85,7 +84,6 @@ export const postUpload = async (req, res) => {
       thumbUrl: isHeroku ? thumb[0].location : thumb[0].path,
       hashtags: Video.HashTagsForm(hashtags),
     });
-
     const user = await User.findById(_id);
     user.videos.push(newVideo._id);
     user.save();
@@ -95,7 +93,6 @@ export const postUpload = async (req, res) => {
       errorMessage: error._message,
     });
   }
-
   return res.redirect("/");
 };
 
@@ -106,6 +103,7 @@ export const deleteVideo = async (req, res) => {
   } = req.session;
   const video = await Video.findById(id);
   const user = await User.findById(_id);
+
   if (!video) {
     return res.status(404).render("404", { pageTitle: "Video not found." });
   }
@@ -123,6 +121,7 @@ export const deleteVideo = async (req, res) => {
 export const search = async (req, res) => {
   const { keyword } = req.query;
   let videos = [];
+
   if (keyword) {
     videos = await Video.find({
       title: {
@@ -137,11 +136,11 @@ export const registerView = async (req, res) => {
   const { id } = req.params;
   const video = await Video.findById(id);
   if (!video) {
-    return res.sendStatus(404); // status 코드를 보내고,연결을 끉는다
+    return res.sendStatus(404);
   }
   video.meta.views = video.meta.views + 1;
   await video.save();
-  return res.sendStatus(200); // status 코드를 보내고,연결을 끉는다
+  return res.sendStatus(200);
 };
 
 export const createComment = async (req, res) => {

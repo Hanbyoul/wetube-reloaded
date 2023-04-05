@@ -38,9 +38,9 @@ const handleDownload = async () => {
   await ffmpeg.run(
     "-i",
     Files.input,
-    "-ss", //추출을 시작할 위치
+    "-ss",
     "00:00:01",
-    "-frames:v", //추출할 비디오 프레임 수
+    "-frames:v",
     "1",
     Files.thumb
   );
@@ -58,12 +58,10 @@ const handleDownload = async () => {
 
   downloadFile(thumbUrl, "My Thumbnail.jpg");
 
-  //가상에 생성된 파일 삭제
   ffmpeg.FS("unlink", Files.input);
   ffmpeg.FS("unlink", Files.output);
   ffmpeg.FS("unlink", Files.thumb);
 
-  //브라우저 메모리에 유지되어 있는 URL 삭제
   URL.revokeObjectURL(mp4Url);
   URL.revokeObjectURL(thumbUrl);
   URL.revokeObjectURL(videoFile);

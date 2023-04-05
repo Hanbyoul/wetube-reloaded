@@ -31,5 +31,4 @@ videosRouter
     ]),
     postUpload
   );
-// .post(videoUpload.single("video"), postUpload); 하나의 파일만 받는 옵션
 export default videosRouter;

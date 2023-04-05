@@ -10,6 +10,7 @@ export const postJoin = async (req, res) => {
   const { name, email, username, password, password2, location } = req.body;
   const exists = await User.exists({ $or: [{ username }, { email }] });
   const pageTitle = "Join";
+
   if (password !== password2) {
     return res.status(400).render("users/join", {
       pageTitle,
@@ -22,6 +23,7 @@ export const postJoin = async (req, res) => {
       errorMessage: "이미 사용중인 username/email 입니다.",
     });
   }
+
   try {
     await User.create({
       name,
@@ -46,6 +48,7 @@ export const postLogin = async (req, res) => {
   const pageTitle = "Login";
   const { username, password } = req.body;
   const user = await User.findOne({ username, socialOnly: false });
+
   if (!user) {
     return res.status(400).render("users/login", {
       pageTitle,
@@ -63,6 +66,8 @@ export const postLogin = async (req, res) => {
   req.session.user = user;
   return res.redirect("/");
 };
+
+//Github
 
 export const startGithubLogin = (req, res) => {
   const baseUrl = "https://github.com/login/oauth/authorize";
@@ -137,7 +142,7 @@ export const finishGithubLogin = async (req, res) => {
   }
 };
 
-// KAKAOLOGIN
+//KAKAO
 
 export const startKakaoLogin = (req, res) => {
   const baseUrl = "https://kauth.kakao.com/oauth/authorize";
@@ -150,6 +155,7 @@ export const startKakaoLogin = (req, res) => {
   const finalUrl = `${baseUrl}?${params}`;
   return res.redirect(finalUrl);
 };
+
 export const finishKakaoLogin = async (req, res) => {
   const baseUrl = "https://kauth.kakao.com/oauth/token";
   const config = {
@@ -207,8 +213,6 @@ export const finishKakaoLogin = async (req, res) => {
   }
 };
 
-// KAKAOLOGIN
-
 export const getEdit = (req, res) => {
   const pageTitle = "Edit Profile";
   return res.render("users/edit-profile", { pageTitle });
@@ -242,7 +246,6 @@ export const postEdit = async (req, res) => {
       });
     }
   }
-  console.log(file);
   const updateUser = await User.findByIdAndUpdate(
     _id,
     {
@@ -259,12 +262,12 @@ export const postEdit = async (req, res) => {
   req.flash("success", "Changes saved");
   return res.redirect("/users/edit");
 };
+
 export const logout = (req, res) => {
   req.session.user = null;
   res.locals.loggedInUser = req.session.user;
   req.session.loggedIn = false;
   req.flash("info", "Bye Bye");
-  // req.session.destroy();
   return res.redirect("/");
 };
 
@@ -272,7 +275,6 @@ export const getChangePassword = (req, res) => {
   const pageTitle = "Change Password";
   if (req.session.user.socialOnly === true) {
     req.flash("error", "Can't change password");
-
     return res.redirect("/");
   }
   return res.render("users/change-password", {
@@ -318,7 +320,7 @@ export const see = async (req, res) => {
   }
 
   return res.render("users/profile", {
-    pageTitle: user.name,
+    pageTitle: user.username,
     user,
   });
 };
