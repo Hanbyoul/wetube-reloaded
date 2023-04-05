@@ -64,6 +64,7 @@ export const postLogin = async (req, res) => {
   }
   req.session.loggedIn = true;
   req.session.user = user;
+  req.flash("success", "환영합니다~");
   return res.redirect("/");
 };
 
