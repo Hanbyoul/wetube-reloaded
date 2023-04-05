@@ -8,6 +8,7 @@
 
 - 백엔드 api를 통한 프론트엔드와의 소통 및 HTTP 메서드 이해
 - 실제 서비스기능 분석,구현하기
+- 부족한 JavaScript역량 보충
 
 ### 배포
 
@@ -29,7 +30,18 @@
 
 ```
 npm install
-npm start
+```
+- Front-end 
+```
+npm run dev:assets
+```
+- Back-end 
+```
+npm run dev:server
+```
+- build
+```
+npm run build
 ```
 
 <br/>
@@ -47,16 +59,26 @@ npm start
 - 회원가입
   - 사용자가 회원가입을 하려면 `Name` `E-mail` `User Name` `Password` `Confirm Password` `Location` 필수 입력하여 진행해야 됩니다.
   - `Password`는 **bycrypt**으로 해쉬 처리하여 UserDB에 저장됩니다.
+  <br/>
+  
+  ![회원가입](https://user-images.githubusercontent.com/99850326/229991300-766d46d3-beab-47b2-aa17-1cbbf4a90b82.gif)
 - 회원정보 수정
   - 사용자는 회원정보를 수정할 수 있습니다.
   - 프로필 사진을 등록,수정할 수 있습니다.
   - `Change Password`링크로 이동하여 `Password`를 수정할 수 있습니다.
+  <br/>
+  
+  ![회원정보수정](https://user-images.githubusercontent.com/99850326/229992291-cdd90165-3b3b-49b0-9324-5c0887a0292f.gif)
 - 소셜 로그인
   - OAuth를 활용하여 Kakao,github 구현하였습니다.
   - 회원정보 수정시 `Change Password`링크가 활성화 되지 않습니다.
   - 해당 소셜에 있는 프로필 사진이 자동으로 프로필 사진으로 등록됩니다.
 - Flash Message
-  - 로그인, 로그아웃 , 회원정보 수정 , 에러 등등 redirect 발생시 사용자에게 메세지들 띄웁니다.
+  - 로그인, 로그아웃 , 회원정보 수정 , 에러 등등 redirect 발생시 사용자에게 메세지를 띄웁니다.
+  <br/>
+  
+  ![소셜 로그인](https://user-images.githubusercontent.com/99850326/229993004-5f377a96-d5e3-4c2d-b9a6-f9a80a13eeee.gif)
+
     <br/>
 
 ### VIDEO
@@ -85,6 +107,10 @@ npm start
   - 검색 아이콘을 클릭하여 영상을 검색할 수 있습니다.
   - 검색된 결과가 없을 경우 "No Videos found"로 출력됩니다.
     <br>
+    
+    ![Video](https://user-images.githubusercontent.com/99850326/229999756-b9912f3f-b96c-4f23-ae4e-0ad5c7ed8ebb.gif)
+
+    <br/>
 
 ### Comments
 
@@ -95,11 +121,25 @@ npm start
   - Comment의 주인은 수정할 수 있으며, 수정 취소가 가능합니다.
 - 삭제
   - Comment의 주인은 Comment를 삭제할 수 있습니다.
+- moment 날짜 기능
+  - Comment 작성 시점으로부터 현재 시간까지의 상대적 시간이 표시됩니다.
 - 좋아요버튼
   - **다른유저가 작성한** Comment에 좋아요 버튼을 **1회** 누를수 있으며, 취소가 가능합니다.
+  
+  <br/>
+  
+  ![댓글](https://user-images.githubusercontent.com/99850326/229999859-8f34dd21-2658-4ab6-a011-135cb7b4d133.gif)
+  
 
 ### 추가했으면 하는 기능
 
 - 회원탈퇴 기능
 - 영상 조회시 페이지네이션 기능
 - 사용자 시청 정보 조회
+<br/>
+
+## 프로젝트 출처
+![icon](https://user-images.githubusercontent.com/99850326/230002527-5a26ff3e-8fa8-46de-b054-516101bd5901.png) [Nomadcoders](https://nomadcoders.co/wetube)
+
+- 해당 프로젝트는 Nomadcoders 온라인 강의를 바탕으로 만들어졌습니다.
+
