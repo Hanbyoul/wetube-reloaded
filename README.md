@@ -55,6 +55,8 @@ npm start
   - OAuth를 활용하여 Kakao,github 구현하였습니다.
   - 회원정보 수정시 `Change Password`링크가 활성화 되지 않습니다.
   - 해당 소셜에 있는 프로필 사진이 자동으로 프로필 사진으로 등록됩니다.
+- Flash Message
+  - 로그인, 로그아웃 , 회원정보 수정 , 에러 등등 redirect 발생시 사용자에게 메세지들 띄웁니다.
     <br/>
 
 ### VIDEO
